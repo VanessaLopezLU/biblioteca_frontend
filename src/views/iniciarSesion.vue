@@ -3,44 +3,30 @@
     <v-app-bar app dark style="background-color: #a6a6a6">
       <v-row rows="3">
         <v-col class="logo" cols="3">
-          <img
-            src="../assets/logos/TAlogin.png"
-            style="max-height: 100px; max-width: 150px" />
+          <img src="../assets/logos/TAlogin.png" style="max-height: 100px; max-width: 150px" />
         </v-col>
         <v-col cols="6" class="text-center">
-          <img
-            src="../assets/logos/title.png"
-            style="max-height: 300px; max-width: 600px" />
+          <img src="../assets/logos/title.png" style="max-height: 300px; max-width: 600px" />
         </v-col>
         <v-col cols="3">
-          <vs-button
-            class="ml-auto"
-            style="
+          <vs-button class="ml-auto" style="
               background-color: #f57025;
               color: white;
               font-size: 16px;
               font-weight: bold;
-            "
-            @click="dialog = true;">Iniciar Sesión</vs-button>
+            " @click="dialog = true;">Iniciar Sesión</vs-button>
         </v-col>
       </v-row>
     </v-app-bar>
     <v-main>
       <v-carousel class="mt-4">
-        <v-carousel-item
-          v-for="(item, i) in items"
-          :key="i"
-          :src="item.src"
-          reverse-transition="fade-transition"
+        <v-carousel-item v-for="(item, i) in items" :key="i" :src="item.src" reverse-transition="fade-transition"
           transition="fade-transition"></v-carousel-item>
       </v-carousel>
       <v-row>
         <v-col cols="4">
           <v-card class="mx-auto my-12" max-width="374" height="550">
-            <v-img
-              cover
-              height="250"
-              src="../assets/card1.png"></v-img>
+            <v-img cover height="250" src="../assets/card1.png"></v-img>
             <v-card-title>¿Quiénes somos?</v-card-title>
             <v-card-text>
               <div>
@@ -56,10 +42,7 @@
           </v-card>
         </v-col>
         <v-col cols="4">
-          <v-card
-            class="mx-auto my-12"
-            max-width="374"
-            height="550">
+          <v-card class="mx-auto my-12" max-width="374" height="550">
             <v-img cover height="250" src="../assets/vision.jpg"></v-img>
             <v-card-title>Misión</v-card-title>
             <v-card-text>
@@ -100,10 +83,7 @@
             <div class="user_card">
               <div class="d-flex justify-content-center">
                 <div class="brand_logo_container">
-                  <img
-                    src="../assets/logos/TAlogin.png"
-                    class="brand_logo"
-                    alt="Logo" />
+                  <img src="../assets/logos/TAlogin.png" class="brand_logo" alt="Logo" />
                 </div>
               </div>
               <div class="d-flex justify-content-center form_container">
@@ -112,27 +92,17 @@
                     <div class="input-group-append">
                       <span class="input-group-text"><i class="fas fa-user"></i></span>
                     </div>
-                    <input
-                      v-model="usuario"
-                      type="text"
-                      name=""
-                      class="form-control input_user"
-                      placeholder="Cédula" :rules="numberRules" />
+                    <input v-model="usuario" type="text" name="" class="form-control input_user" placeholder="Cédula"
+                      :rules="numberRules" />
                   </div>
                   <div class="input-group mb-2">
                     <div class="input-group-append">
                       <span class="input-group-text"><i class="fas fa-key"></i></span>
                     </div>
-                    <input
-                      v-model="contrasena"
-                      type="password"
-                      name=""
-                      class="form-control input_pass"
-                      placeholder="Contraseña"
-                      :rules="campoRules" />
+                    <input v-model="contrasena" type="password" name="" class="form-control input_pass"
+                      placeholder="Contraseña" :rules="campoRules" />
                   </div>
-                  <div
-                    class="d-flex justify-content-center mt-3 login_container">
+                  <div class="d-flex justify-content-center mt-3 login_container">
                     <vs-button dark class="btn login_btn" @click="login">Iniciar Sesión</vs-button>
                   </div>
                 </form>
@@ -140,7 +110,7 @@
 
               <div class="mt-4">
                 <div class="d-flex justify-content-center links">
-                  <a href="#" style="color: black">¿Olvidaste tu contraseña?</a>
+                  <a @click="restablecer" style="color: black">¿Olvidaste tu contraseña?</a>
                 </div>
               </div>
             </div>
@@ -149,19 +119,9 @@
       </v-dialog>
     </v-main>
     <v-footer padless>
-      <v-card
-        flat
-        tile
-        height="100%"
-        width="100%"
-        class="mt-0 orange lighten-1 white--text text-center">
+      <v-card flat tile height="100%" width="100%" class="mt-0 orange lighten-1 white--text text-center">
         <v-card-text>
-          <v-btn
-            v-for="(icon, index) in icons"
-            :key="icon"
-            class="mx-4 white--text"
-            icon
-            :href="iconsN[index].url">
+          <v-btn v-for="(icon, index) in icons" :key="icon" class="mx-4 white--text" icon :href="iconsN[index].url">
             <v-icon size="24px">
               {{ icon }}
             </v-icon>
@@ -179,11 +139,7 @@
         </v-card-text>
       </v-card>
     </v-footer>
-    <dialogMensaje
-      :mostrar="dialogMsj"
-      @cerrado="dialogMsj = false"
-      :title="paqueteMsj.title"
-      :body="paqueteMsj.body"
+    <dialogMensaje :mostrar="dialogMsj" @cerrado="dialogMsj = false" :title="paqueteMsj.title" :body="paqueteMsj.body"
       :classTitle="paqueteMsj.classTitle" />
   </v-app>
 </template>
@@ -267,7 +223,7 @@ export default {
             this.paqueteMsj.classTitle = response.data ? "success" : "error";
             this.dialogMsj = true;
             this.$store.commit("setusuario", response.data);
-            this.$router.push("/dashboard/miprestamo");
+            this.$router.push("/dashboard/welcome");
           } else {
             this.paqueteMsj.title = "Iniciar sesión";
             this.paqueteMsj.body = "No se pudo iniciar sesión";
@@ -285,6 +241,9 @@ export default {
         });
 
     },
+    async restablecer() {
+      this.$router.push("/rest");
+    }
   },
 };
 </script>

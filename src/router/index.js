@@ -11,6 +11,11 @@ const routes = [
     component: () => import("../views/iniciarSesion.vue"),
   },
   {
+    path: "/rest",
+    name: "restablecimiento",
+    component: () => import("../views/restcontrasena.vue"),
+  },
+  {
     path: "/dashboard",
     name: "Dashboard",
     component: () => import("../views/dashboard"),
@@ -245,7 +250,6 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  // mode: 'history',
   base: process.env.BASE_URL,
   routes,
 });

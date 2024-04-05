@@ -16,6 +16,11 @@ const routes = [
     component: () => import("../views/restcontrasena.vue"),
   },
   {
+    path: "/Cambio-de-contrasena/:cedula",
+    name: "cambio de contraseña",
+    component: () => import("../views/cambio.vue"),
+  },
+  {
     path: "/dashboard",
     name: "Dashboard",
     component: () => import("../views/dashboard"),

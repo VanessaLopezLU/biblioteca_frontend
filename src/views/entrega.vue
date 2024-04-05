@@ -10,30 +10,18 @@
                                 <v-form ref="form">
                                     <v-row no-gutters>
                                         <v-col cols="12" class="pr-0 pb-0">
-                                            <v-autocomplete
-                                                v-model="paquete.cedula"
-                                                :items="usuarios"
-                                                :item-text="(usuario) => {
-                                                    return `${usuario.cedula} - ${usuario.nombre} ${usuario.apellido}`;
-                                                }
-                                                    "
-                                                item-value="cedula"
-                                                label="Cédula"
-                                                :rules="campoRules"
-                                                filled
-                                                required
-                                                no-data-text="Sin usuarios"
-                                                append-icon="mdi mdi-account">
+                                            <v-autocomplete v-model="paquete.cedula" :items="usuarios" :item-text="(usuario) => {
+                                                return `${usuario.cedula} - ${usuario.nombre} ${usuario.apellido}`;
+                                            }
+                                                " item-value="cedula" label="Cédula" :rules="campoRules" filled
+                                                required no-data-text="Sin usuarios" append-icon="mdi mdi-account">
                                             </v-autocomplete>
                                         </v-col>
                                     </v-row>
                                 </v-form>
                             </v-card-text>
                             <v-card-actions class="justify-center">
-                                <v-btn
-                                    color="#ffa726"
-                                    class="py-4 px-2"
-                                    @click="buscarPrestamos">
+                                <v-btn color="#ffa726" class="py-4 px-2" @click="buscarPrestamos">
                                     <v-icon dark> mdi mdi-account-search-outline </v-icon>
                                 </v-btn>
                             </v-card-actions>
@@ -41,21 +29,17 @@
                     </v-col>
                 </v-row>
                 <v-row class="flex-column mt-4">
-                    <v-data-table
-                        :headers="headersPrestamo"
-                        :items="prestamosTabla"
-                        :footer-props="{
-                                                    'show-current-page': true,
-                                                    'items-per-page-options': [5, 10, 15],
-                                                    itemsPerPageText: 'Registros mostrados',
-                                                    pageText: '{0}-{1} de {2}',
-                                                    showFirstLastPage: true,
-                                                    firstIcon: 'mdi-arrow-collapse-left',
-                                                    lastIcon: 'mdi-arrow-collapse-right',
-                                                    prevIcon: 'mdi-minus',
-                                                    nextIcon: 'mdi-plus',
-                                                }"
-                        class="elevation-1">
+                    <v-data-table :headers="headersPrestamo" :items="prestamosTabla" :footer-props="{
+                        'show-current-page': true,
+                        'items-per-page-options': [5, 10, 15],
+                        itemsPerPageText: 'Registros mostrados',
+                        pageText: '{0}-{1} de {2}',
+                        showFirstLastPage: true,
+                        firstIcon: 'mdi-arrow-collapse-left',
+                        lastIcon: 'mdi-arrow-collapse-right',
+                        prevIcon: 'mdi-minus',
+                        nextIcon: 'mdi-plus',
+                    }" class="elevation-1">
                         <template v-slot:top>
                             <v-toolbar flat>
                                 <v-toolbar-title>Préstamos</v-toolbar-title>
@@ -65,10 +49,7 @@
                         <template v-slot:item.actions="{ index }">
                             <v-tooltip top color="info">
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-icon
-                                        color="var(--c-orange)"
-                                        v-bind="attrs"
-                                        v-on="on"
+                                    <v-icon color="var(--c-orange)" v-bind="attrs" v-on="on"
                                         @click="verDetalles(index)">
                                         mdi mdi-eye
                                     </v-icon>
@@ -86,28 +67,21 @@
         </v-card>
         <v-row justify="space-around">
             <v-col cols="auto">
-                <v-dialog
-                    transition="dialog-bottom-transition"
-                    max-width="900"
-                    v-model="dialogDetalle">
+                <v-dialog transition="dialog-bottom-transition" max-width="900" v-model="dialogDetalle">
                     <v-card>
                         <v-card-title>Equipos</v-card-title>
                         <v-card-text>
-                            <v-data-table
-                                :headers="headersDetalle"
-                                :items="itemsDetalle"
-                                :footer-props="{
-                                                    'show-current-page': true,
-                                                    'items-per-page-options': [5, 10, 15],
-                                                    itemsPerPageText: 'Registros mostrados',
-                                                    pageText: '{0}-{1} de {2}',
-                                                    showFirstLastPage: true,
-                                                    firstIcon: 'mdi-arrow-collapse-left',
-                                                    lastIcon: 'mdi-arrow-collapse-right',
-                                                    prevIcon: 'mdi-minus',
-                                                    nextIcon: 'mdi-plus',
-                                                }"
-                                class="elevation-1">
+                            <v-data-table :headers="headersDetalle" :items="itemsDetalle" :footer-props="{
+                                'show-current-page': true,
+                                'items-per-page-options': [5, 10, 15],
+                                itemsPerPageText: 'Registros mostrados',
+                                pageText: '{0}-{1} de {2}',
+                                showFirstLastPage: true,
+                                firstIcon: 'mdi-arrow-collapse-left',
+                                lastIcon: 'mdi-arrow-collapse-right',
+                                prevIcon: 'mdi-minus',
+                                nextIcon: 'mdi-plus',
+                            }" class="elevation-1">
 
                                 <template v-slot:top>
                                     <v-row justify="end" class="pa-4">
@@ -132,12 +106,8 @@
                 </v-dialog>
             </v-col>
         </v-row>
-        <dialogMensaje
-            :mostrar="dialogMsj"
-            @cerrado="dialogMsj = false"
-            :title="paqueteMsj.title"
-            :body="paqueteMsj.body"
-            :classTitle="paqueteMsj.classTitle" />
+        <dialogMensaje :mostrar="dialogMsj" @cerrado="dialogMsj = false" :title="paqueteMsj.title"
+            :body="paqueteMsj.body" :classTitle="paqueteMsj.classTitle" />
     </v-container>
 </template>
 

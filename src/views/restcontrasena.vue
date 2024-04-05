@@ -31,6 +31,11 @@
                     <div class="d-flex justify-content-center mt-3 login_container">
                       <vs-button dark class="btn login_btn" @click="recuperarContrasena">Recuperar</vs-button>
                     </div>
+                    <div class="mt-4">
+                      <div class="d-flex justify-content-center links">
+                        <a @click="login" style="color: black">login</a>
+                      </div>
+                    </div>
                   </form>
                 </div>
               </div>
@@ -69,6 +74,12 @@
       correo: "",
     }),
     methods: {
+      async cambio() {
+        this.$router.push("/Cambio-de-contrasena");
+      },
+      async login() {
+        this.$router.push("/");
+      },
       async recuperarContrasena() {
         try {
           const response = await axios.post(`${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}/usuario/recuperar-contrasena`, {

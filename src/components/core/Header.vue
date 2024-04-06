@@ -3,10 +3,7 @@
     <template v-slot:img="{ props }">
       <v-img v-bind="props" src="../../assets/Tulbar.png"></v-img>
     </template>
-    <v-app-bar-nav-icon
-      class="btn"
-      dark
-      @click="procesa()"></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon class="btn" dark @click="procesa()"></v-app-bar-nav-icon>
 
     <v-toolbar-title class="letra">SISTEMA DE BIBLIOTECAS</v-toolbar-title>
 
@@ -22,10 +19,7 @@
       </template>
       <v-list dense>
         <v-list-item-group v-model="selectedItem" color="primary">
-          <v-list-item
-            v-for="(item, i) in items"
-            :key="i"
-            @click="action(item.action)">
+          <v-list-item v-for="(item, i) in items" :key="i" @click="action(item.action)">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -41,13 +35,14 @@
 
 <script>
 export default {
+
   data() {
     return {
       selectedItem: null,
       items: [
-        { text: "Perfil", icon: "mdi-clock", action: 'perfil' },
-        { text: "Salir", icon: "mdi-account", action: "salir" },
-      ],
+        { text: 'Perfil', icon: 'mdi mdi-account', action: 'perfil' },
+        { text: 'Salir', icon: 'mdi mdi-logout', action: 'salir' }
+      ]
     };
   },
   methods: {
@@ -63,7 +58,8 @@ export default {
           break;
       }
     },
-  },
+
+  }
 };
 </script>
 <style lang="scss" scoped>

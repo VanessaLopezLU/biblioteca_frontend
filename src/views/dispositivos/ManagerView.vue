@@ -14,7 +14,7 @@
                             item-value="id"
                             label="Tipo de equipo"
                             return-object
-                            single-line
+                            single-line filled
                             required no-data-text="Sin tipos de equipo"></v-select>
                     </div>
                 </v-bottom-navigation>
@@ -65,8 +65,8 @@ export default {
                 ruta: '/dashboard/ManagerView/Mouse'
             },
             {
-                tipo: 'Teclado',
-                ruta: '/dashboard/ManagerView/Teclado'
+                tipo: 'Cargador',
+                ruta: '/dashboard/ManagerView/Cargador'
             },
             {
                 tipo: 'Cable HDMI',
@@ -85,18 +85,14 @@ export default {
     },
     watch: {
         select() {
-            let comparar1, comparar2, coinc = false;
+            let comparar1, comparar2;
             this.items.filter(item => {
                 comparar1 = item.tipo.toLocaleLowerCase();
                 comparar2 = this.select.tipo.toLocaleLowerCase();
                 if (comparar1 === comparar2) {
-                    coinc = true;
                     this.$router.push(item.ruta);
                 }
             });
-            if (!coinc) {
-                this.$router.push('/dashboard/ManagerView/nuevo');
-            }
         }
     },
     created() {

@@ -11,7 +11,7 @@ import Vuesax from 'vuesax'
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import vuescroll from "vuescroll";
-
+import EstadoEquipo from './components/EstadoEquipo.vue'
 Vue.use(require('vue-moment'));
 
 // You can set global config here.
@@ -26,19 +26,17 @@ Vue.use(vuescroll, {
 //Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.use(Vuesax, {
-  // options here
+    // options here
 })
 
 Vue.use(BootstrapVue);
 Vue.use(VueRouter);
-
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 
-
 new Vue({
-  router,
-  store,
-  vuetify,
-  render: h => h(App)
-}).$mount('#app')
+    router,
+    store,
+    vuetify,
+    render: h => h(App)
+}).$mount('#app');

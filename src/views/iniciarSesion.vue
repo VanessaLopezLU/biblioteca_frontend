@@ -110,7 +110,7 @@
 
               <div class="mt-4">
                 <div class="d-flex justify-content-center links">
-                  <a @click="restablecer" style="color: black">¿Olvidaste tu contraseña?</a>
+                  <a @click="() => $router.push('/recuperar')" style="color: black">¿Olvidaste tu contraseña?</a>
                 </div>
               </div>
             </div>
@@ -223,7 +223,7 @@ export default {
             this.paqueteMsj.classTitle = response.data ? "success" : "error";
             this.dialogMsj = true;
             this.$store.commit("setusuario", response.data);
-            this.$router.push("/dashboard/welcome");
+            this.$router.push("/dashboard/miprestamo");
           } else {
             this.paqueteMsj.title = "Iniciar sesión";
             this.paqueteMsj.body = "No se pudo iniciar sesión";
@@ -240,9 +240,6 @@ export default {
           this.dialogMsj = true;
         });
 
-    },
-    async restablecer() {
-      this.$router.push("/rest");
     }
   },
 };

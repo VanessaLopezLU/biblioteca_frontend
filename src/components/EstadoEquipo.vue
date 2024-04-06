@@ -34,7 +34,7 @@ export default {
     watch: {
         estado() {
             console.log(this.$props.estado);
-            this.estadoSelect = this.$props.estado.value;
+            this.estadoSelect = this.$props.estado;
             this.pos = this.$props.estado.index;
         }
     },

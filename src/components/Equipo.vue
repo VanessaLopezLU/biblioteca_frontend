@@ -7,14 +7,14 @@
             loading-text="Cargando, por favor espere..."
             :footer-props="{
                 'show-current-page': true,
-                'items-per-page-options': [5, 10, 15],
                 itemsPerPageText: 'Registros mostrados',
                 pageText: '{0}-{1} de {2}',
                 showFirstLastPage: true,
                 firstIcon: 'mdi-arrow-collapse-left',
                 lastIcon: 'mdi-arrow-collapse-right',
                 prevIcon: 'mdi-minus',
-                nextIcon: 'mdi-plus'
+                nextIcon: 'mdi-plus',
+                'items-per-page-all-text': 'Todos'
             }"
             class="elevation-1">
             <template v-slot:top>
@@ -26,12 +26,12 @@
             <template v-slot:item.serial="{ item }">
                 {{ item.serial.split('-')[0] }}
             </template>
-            <template v-slot:item.actions="{ item, index }">
+            <template v-slot:item.actions="{ item }">
                 <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
                         <v-icon
                             color="var(--c-orange)"
-                            class="mr-2" @click="editarEquipo(item)"
+                            class="mr-2" @click="verEquipo(item)"
                             v-bind="attrs" v-on="on">
                             mdi-pencil
                         </v-icon>
@@ -41,7 +41,7 @@
                 <v-tooltip top color="error">
                     <template v-slot:activator="{ on, attrs }">
                         <v-icon
-                            color="var(--c-orange)" v-bind="attrs" v-on="on" @click="eliminarEquipo(index)">
+                            color="var(--c-orange)" v-bind="attrs" v-on="on" @click="() => { serialEliminar = item.serial; confirmacion.mostrar = true; }">
                             mdi-delete
                         </v-icon>
                     </template>
@@ -59,23 +59,14 @@
 
         <v-row justify="space-around">
             <v-col cols="auto">
-                <v-dialog
-                    transition="dialog-bottom-transition"
-                    max-width="600"
-                    v-model="dialogExcel">
+                <v-dialog transition="dialog-bottom-transition" max-width="600" v-model="dialogExcel">
                     <v-card>
                         <v-card-title>
                             <span class="text-h5">Subir excel de equipos</span>
                         </v-card-title>
                         <v-card-text class="px-1">
                             <v-form ref="formExcel" enctype="multipart/form-data">
-                                <v-file-input
-                                    label="Excel"
-                                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                                    filled v-model="paquete.excel"
-                                    append-icon="mdi mdi-microsoft-excel"
-                                    prepend-icon=""
-                                    :rules="rulesExcel" />
+                                <v-file-input label="Excel" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" filled v-model="paquete.excel" append-icon="mdi mdi-microsoft-excel" prepend-icon="" :rules="rulesExcel" />
                             </v-form>
                         </v-card-text>
                         <v-card-actions class="justify-end">
@@ -86,17 +77,50 @@
                 </v-dialog>
             </v-col>
         </v-row>
+        <!-- Editar equipo -->
+        <v-row justify="space-around">
+            <v-col cols="auto">
+                <v-dialog persistent transition="dialog-bottom-transition" max-width="500" v-model="dialogEditarEquipo">
+                    <v-card>
+                        <v-card-title>
+                            <span class="text-h5">Editar equipo</span>
+                        </v-card-title>
+                        <v-card-text class="px-1">
+                            <v-form ref="formEditarEquipo">
+                                <v-row no-gutters>
+                                    <v-col cols="12">
+                                        <v-text-field v-model="paqueteEditarEquipo.marca" filled :rules="campoRules" label="Marca" required />
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-select v-model="paqueteEditarEquipo.estado" :items="estadosEquipo" item-text="estado" item-value="id" return-object filled :rules="[(v) => !!v || 'Estado es requerido']" label="Estado" required />
+                                    </v-col>
+                                </v-row>
+                            </v-form>
+                        </v-card-text>
+                        <v-card-actions class="justify-end">
+                            <v-btn color="orange" @click="actualizarEquipo">Actualizar</v-btn>
+                            <v-btn color="error" @click="dialogEditarEquipo = false">Cancelar</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-col>
+        </v-row>
+        <dialogConfirmacion :mostrar="confirmacion.mostrar" :entidad="confirmacion.entidad" @confirmacion="(resp) => { resp ? (this.confirmacion.mostrar = false, this.eliminarEquipo()) : this.confirmacion.mostrar = false; }" />
     </div>
 </template>
 <script>
 import axios from 'axios';
 import dialogMensaje from './dialogMensaje.vue';
+import dialogConfirmacion from './dialogConfirmar.vue';
 export default {
     name: 'EquipoComponent',
-    components: { dialogMensaje },
+    components: { dialogMensaje, dialogConfirmacion },
     data: () => ({
         rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
         dialogExcel: false,
+        dialogEditarEquipo: false,
+        estadosEquipo: [],
+        token: {},
         headersEquipo: [{ text: 'Serial', value: 'serial' },
         { text: 'Marca', value: 'marca' },
         { text: 'Estado', value: 'estado_equipo.estado' },
@@ -111,6 +135,10 @@ export default {
             title: null,
             body: null
         },
+        confirmacion: {
+            mostrar: false,
+            entidad: 'equipo'
+        },
         btnSubir: false,
         paquete: {
             excel: null
@@ -124,6 +152,15 @@ export default {
                 return true;
             }, value => !value || value.size < 2000000 || 'El archivo puede ser de hasta 2 MB',
         ],
+        campoRules: [
+            (v) => !!v || "Campo requerido",
+        ],
+        paqueteEditarEquipo: {
+            serial: null,
+            marca: null,
+            estado: {}
+        },
+        serialEliminar: null,
     }),
     methods: {
         async subir() {
@@ -153,14 +190,50 @@ export default {
                 this.btnSubir = false;
             }
         },
-        editarEquipo(equipo) {
-            console.log(equipo);
+        verEquipo(equipo) {
+            if (equipo != null) {
+                this.paqueteEditarEquipo.serial = equipo.serial;
+                this.paqueteEditarEquipo.marca = equipo.marca;
+                this.paqueteEditarEquipo.estado = equipo.estado_equipo;
+                this.dialogEditarEquipo = true;
+            }
         },
-        async eliminarEquipo(idEquipo) {
-            await axios.delete(`${this.rutaBackend}/equipo/${idEquipo}`).then(response => {
-                console.log(response);
-                this.obtenerEquipos();
-            });
+        async actualizarEquipo() {
+            if (this.$refs.formEditarEquipo.validate()) {
+                this.$emit('loadingManager', 'Actualizando datos, espere un momento...');
+                await axios.put(`${this.rutaBackend}/equipo/actualizar`, { ...this.paqueteEditarEquipo, estado: this.paqueteEditarEquipo.estado.id }, this.token).then(response => {
+                    if (response.data.actualizado) {
+                        this.obtenerEstadosEquipo();
+                        this.obtenerEquipos();
+                        this.dialogEditarEquipo = false;
+                    }
+                    this.detalleMsj.title = "Actualizar equipo";
+                    this.detalleMsj.body = response.data.message;
+                    this.detalleMsj.classTitle = response.data.actualizado ? 'success' : 'error';
+                    this.dialogMsj = true;
+                }).catch(error => {
+                    console.log(error);
+                });
+                this.$emit('closeManager');
+            }
+        },
+        async eliminarEquipo() {
+            if (this.serialEliminar != null) {
+                this.$emit('loadingManager', 'Eliminando equipo, espere un momento...');
+                await axios.delete(`${this.rutaBackend}/equipo/${this.serialEliminar}`, this.token).then(response => {
+                    if (response.data.eliminado) {
+                        this.obtenerEstadosEquipo();
+                        this.obtenerEquipos();
+                    }
+                    this.detalleMsj.title = "Eliminar equipo";
+                    this.detalleMsj.body = response.data.message;
+                    this.detalleMsj.classTitle = response.data.eliminado ? 'success' : 'error';
+                    this.dialogMsj = true;
+                });
+                this.$emit('closeManager');
+            }
+
+
         },
         async obtenerEquipos() {
             this.loadTablaEquipo = true;
@@ -169,13 +242,25 @@ export default {
             }).catch(error => {
                 this.detalleMsj.title = "Obtener equipos";
                 this.detalleMsj.body = "No se pudo obtener los equipo, contacta con soporte";
+                this.detalleMsj.classTitle = 'error';
                 this.dialogMsj = true;
                 console.log(`Error: ${error}`);
             });
             this.loadTablaEquipo = false;
-        }
+        },
+        async obtenerEstadosEquipo() {
+            await axios.get(`${this.rutaBackend}/estado-equipo`, this.token).then(response => {
+                this.estadosEquipo = response.data;
+            });
+        },
     },
     created() {
+        this.token = {
+            headers: {
+                Authorization: `Bearer ${this.$store.getters.getToken}`
+            }
+        }
+        this.obtenerEstadosEquipo();
         this.obtenerEquipos();
     }
 }

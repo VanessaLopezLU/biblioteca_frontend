@@ -6,17 +6,17 @@
                     Registrar estado préstamo
                 </v-card-title>
                 <v-card-text>
-                    <v-form ref="form" v-model="validEstado" lazy-validation>
+                    <v-form ref="form" lazy-validation>
                         <v-text-field
                             v-model="paquete.estado"
                             :rules="campoRules"
                             label="Estado préstamo"
-                            placeholder="Ej: Devuelto"
+                            placeholder="Ej: Devuelto" filled
                             required></v-text-field>
                     </v-form>
                 </v-card-text>
                 <v-card-actions class="justify-center">
-                    <v-btn @click="guardarEstadoPrestamo" :disabled="disableBtn" class="btn-tabla">Guardar</v-btn>
+                    <v-btn @click="guardarEstadoPrestamo" class="btn-tabla">Guardar</v-btn>
                 </v-card-actions>
             </v-card>
         </v-row>
@@ -49,58 +49,14 @@
                 <template v-slot:item.estado="{ item }">
                     <v-chip
                         class="ma-2"
-                        :color="item.id == 1 ? 'primary' : item.id == 2 ? 'orange' : 'success'">
+                        :color="item.id == 1 ? 'primary' : item.id == 2 ? 'orange' : item.id == 3 ? 'success' : 'error'">
                         {{ item.estado }}
                     </v-chip>
-                </template>
-                <template v-slot:item.actions="{ index }">
-                    <v-tooltip top color="error">
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-icon
-                                color="var(--c-orange)" v-bind="attrs" v-on="on" @click="eliminarEstado(index)">
-                                mdi-delete
-                            </v-icon>
-                        </template>
-                        <span>Eliminar estado préstamo</span>
-                    </v-tooltip>
                 </template>
                 <template slot="no-data">
                     <p class="text-dark">Sin datos de estados de préstamo</p>
                 </template>
             </v-data-table>
-        </v-row>
-        <!--Dialog editar-->
-        <v-row justify="space-around">
-            <v-col cols="auto">
-                <v-dialog
-                    transition="dialog-bottom-transition"
-                    max-width="500" v-model="dialogEditar">
-                    <v-card>
-                        <v-toolbar
-                            color="var(--c-orange)"
-                            dark class="elevation-1">
-                            <h2>Editar estado de equipo</h2>
-                        </v-toolbar>
-                        <v-card-text>
-                            <v-form ref="formEditar" v-model="validEditar" lazy-validation class="mt-3">
-                                <v-text-field
-                                    v-model="paqueteEditar.estado"
-                                    :rules="campoRules"
-                                    label="Estado de equipo"
-                                    placeholder="Ej: Bueno"
-                                    required></v-text-field>
-                            </v-form>
-                        </v-card-text>
-                        <v-card-actions class="justify-end">
-                            <v-btn
-                                @click="guardarEditarItem()" class="btn-tabla">Actualizar</v-btn>
-                            <v-btn depressed class="btn-cancelar" @click="cerrarDialogEditar()">
-                                Cancelar
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-            </v-col>
         </v-row>
         <!--Dialog para mensajes temporales-->
         <dialogMensaje :mostrar="dialogMsj" :title="detalleMsj.title" :body="detalleMsj.body" :classTitle="detalleMsj.classTitle" @cerrado="dialogMsj = false" />
@@ -114,8 +70,8 @@ export default {
     data: () => ({
         rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
         valid: true,
+        token: {},
         disableBtn: false,
-        validEstado: true,
         validEditar: true,
         campoRules: [
             (v) => !!v || "Campo requerido",
@@ -127,8 +83,7 @@ export default {
             id: null, estado: null
         },
         headersEstado: [
-            { text: 'Estado', value: 'estado' },
-            { text: 'Acciones', value: 'actions', sortable: false, align: 'right' }
+            { text: 'Estado', value: 'estado', align: 'center' },
         ],
         itemsEstado: [],
         dialogEditar: false,
@@ -144,7 +99,7 @@ export default {
     methods: {
         async obtenerEstadosPrestamo() {
             this.loadTabla = true;
-            await axios.get(`${this.rutaBackend}/estado-prestamo`).then(response => {
+            await axios.get(`${this.rutaBackend}/estado-prestamo`, this.token).then(response => {
                 this.itemsEstado = response.data;
             }).catch(error => {
                 this.detalleMsj.title = "Obtener estados de préstamo";
@@ -160,39 +115,39 @@ export default {
             this.dialogEditar = true;
         },
 
-        eliminarEstado(idEstado) {
-            const index = this.itemsEstado.indexOf(idEstado);
-            confirm('Are you sure you want to delete this item?') && this.itemsEstado.splice(index, 1)
-        },
-
         cerrarDialogEditar() {
             this.dialogEditar = false;
             this.paqueteEditar.id = null;
             this.paqueteEditar.estado = null;
         },
-
-        async guardarEditarItem() {
-            if (this.$refs.formEditar.validate()) {
-                //await axios.pu
-                console.log('Val');
-            }
-        },
         async guardarEstadoPrestamo() {
             if (this.$refs.form.validate()) {
-                this.disableBtn = true;
-                await axios.post(`${this.rutaBackend}/estado-prestamo/crear`, this.paquete).then(() => {
-                    this.obtenerEstadosPrestamo();
-                    this.$refs.form.reset();
+                this.$emit('loading', 'Creando estado de préstamo...');
+                await axios.post(`${this.rutaBackend}/estado-prestamo/crear`, this.paquete, this.token).then((response) => {
+                    if (response.data.creado) {
+                        this.obtenerEstadosPrestamo();
+                        this.$refs.form.reset();
+                    }
+                    this.detalleMsj.title = "Crear equipo";
+                    this.detalleMsj.classTitle = response.data.creado ? "success" : "error";
+                    this.detalleMsj.body = response.data.message;
+                    this.dialogMsj = true;
                 }).catch(error => {
                     this.detalleMsj.title = "Guardar estado de equipo";
+                    this.detalleMsj.classTitle = 'error';
                     this.detalleMsj.body = "No se pudo guardar el estado de equipo, contacta con soporte";
                     this.dialogMsj = true;
                     console.log(`Error creando: ${error}`);
                 });
-                this.disableBtn = false;
+                this.$emit('close');
             }
         },
     }, created() {
+        this.token = {
+            headers: {
+                Authorization: `Bearer ${this.$store.getters.getToken}`
+            }
+        }
         this.obtenerEstadosPrestamo();
     }
 }

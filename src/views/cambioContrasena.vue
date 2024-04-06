@@ -5,19 +5,17 @@
         <v-col class="logo" cols="3">
           <img
             src="../assets/logos/TAlogin.png"
-            style="max-height: 100px; max-width: 150px"
-          />
+            style="max-height: 100px; max-width: 150px" />
         </v-col>
         <v-col cols="6" class="text-center">
           <img
             src="../assets/logos/title.png"
-            style="max-height: 300px; max-width: 600px"
-          />
+            style="max-height: 300px; max-width: 600px" />
         </v-col>
       </v-row>
     </v-app-bar>
     <br />
-    <v-content>
+    <v-content v-if="puedeRecuperar">
       <v-container>
         <div class="container h-50">
           <div class="d-flex justify-content-center h-50">
@@ -27,66 +25,66 @@
                   <img
                     src="../assets/logos/TAlogin.png"
                     class="brand_logo"
-                    alt="Logo"
-                  />
+                    alt="Logo" />
                 </div>
               </div>
-              <div class="d-flex justify-content-center form_container">
-                <form v-on:submit.prevent ref="formSesion">
-                  <div class="input-group mb-2">
-                    <div class="input-group-append">
-                      <span class="input-group-text"
-                        ><i class="fas fa-key"></i
-                      ></span>
-                    </div>
-                    <input
-                      v-model="contrasena"
-                      type="password"
-                      name=""
-                      class="form-control input_pass"
-                      placeholder="Contraseña nueva"
-                      :rules="campoRules"
-                    />
-                  </div>
-                  <div class="input-group mb-2">
-                    <div class="input-group-append">
-                      <span class="input-group-text"
-                        ><i class="fas fa-key"></i
-                      ></span>
-                    </div>
-                    <input
-                      v-model="confirm_contrasena"
-                      type="password"
-                      name=""
-                      class="form-control input_pass"
-                      placeholder="Confirmar contraseña"
-                      :rules="campoRules"
-                    />
-                  </div>
+              <div class="d-flex justify-content-center">
+                <v-form v-on:submit.prevent ref="formCambiar" class="mt-12" style="width: 100%;">
+                  <v-row no-gutters>
+                    <v-col cols="12" class="pt-12">
+                      <v-text-field
+                        v-model="nuevaContrasena"
+                        :append-icon="nueva ? 'mdi-eye' : 'mdi-eye-off'"
+                        :rules="[rules.required]"
+                        :type="nueva ? 'text' : 'password'"
+                        filled
+                        label="Nueva contraseña"
+                        @click:append="nueva = !nueva" autocomplete="off" />
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                        v-model="confirmacionContrasena"
+                        filled
+                        :append-icon="confirmacion ? 'mdi-eye' : 'mdi-eye-off'"
+                        :rules="[rules.required, confirmContrasenaRule]"
+                        :type="confirmacion ? 'text' : 'password'"
+                        label="Confirmar contraseña"
+                        @click:append="confirmacion = !confirmacion" autocomplete="off" />
+                    </v-col>
+                  </v-row>
                   <div
-                    class="d-flex justify-content-center mt-3 login_container"
-                  >
+                    class="d-flex justify-content-center mt-3 login_container">
                     <vs-button
                       dark
                       class="btn login_btn"
-                      @click="recuperarContrasena"
-                      >Cambiar contraseña</vs-button
-                    >
+                      @click="recuperarContrasena">Cambiar contraseña</vs-button>
                   </div>
-                </form>
+                </v-form>
               </div>
             </div>
           </div>
         </div>
       </v-container>
     </v-content>
+    <v-content v-else>
+      <v-row no-gutters class="flex-column align-items-center">
+        <v-col cols="9">
+          <v-img
+            lazy-src="@/assets/images/404.jpg"
+            max-height="350"
+            src="@/assets/images/404.jpg" />
+        </v-col>
+        <p class="h3">{{ puedeMsj }}</p>
+        <a @click="() => $router.push('/')" class="text-h5">Ir al inicio</a>
+      </v-row>
+    </v-content>
+
     <dialogMensaje
       :mostrar="dialogMsj"
       @cerrado="dialogMsj = false"
       :title="paqueteMsj.title"
       :body="paqueteMsj.body"
-      :classTitle="paqueteMsj.classTitle"
-    />
+      :classTitle="paqueteMsj.classTitle" />
   </v-app>
 </template>
 
@@ -100,8 +98,16 @@ export default {
     dialogMensaje,
   },
   data: () => ({
-    active: "home",
+    confirmacion: false,
+    nueva: false,
+    nuevaContrasena: null,
+    confirmacionContrasena: null,
+    rules: {
+      required: value => !!value || 'Campo requerido',
+    },
     rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    puedeRecuperar: false,
+    puedeMsj: null,
     dialog: false,
     dialogMsj: false,
     paqueteMsj: {
@@ -113,58 +119,47 @@ export default {
   }),
   methods: {
     async recuperarContrasena() {
-      try {
-        if (this.contrasena !== this.confirm_contrasena) {
-          this.$refs.dialogMensaje.mostrarMensaje(
-            "Error",
-            "Las contraseñas no coinciden",
-            "error"
-          );
-          return;
-        }
-
-        const response = await axios.put(
-          `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}/usuario/cambiar`,
+      if (this.$refs.formCambiar.validate()) {
+        this.$emit('loading', 'Actualizando contraseña...');
+        await axios.put(`${this.rutaBackend}/usuario/cambiar-contrasena`,
           {
-            cedula: this.$route.params.cedula,
-            contrasena: this.contrasena,
+            cedula: parseInt(this.$route.params.cedula),
+            contrasena: this.nuevaContrasena,
           }
-        );
-
-        if (response.data.success) {
-          this.$refs.formSesion.reset();
-          this.$refs.dialogMensaje.mostrarMensaje(
-            "Éxito",
-            response.data.message,
-            "success"
-          );
-          this.$router.navigate;
-          this.$router.push("/cambio");
-        } else {
-          this.$refs.dialogMensaje.mostrarMensaje(
-            "Error",
-            response.data.message,
-            "error"
-          );
-        }
-      } catch (error) {
-        console.error("Error al recuperar la contraseña:", error);
-        this.$refs.dialogMensaje.mostrarMensaje(
-          "Error",
-          "Error al recuperar la contraseña",
-          "error"
-        );
+        ).then(response => {
+          this.paqueteMsj.title = "Cambiar contraseña";
+          this.paqueteMsj.body = response.data.message;
+          this.paqueteMsj.classTitle = response.data.actualizado ? "success" : "error";
+          if (response.data.actualizado) {
+            this.$router.push('/');
+          }
+        });
+        this.$emit('close');
       }
     },
   },
+  computed: {
+    confirmContrasenaRule() {
+      return (value) => {
+        if (value === this.nuevaContrasena) {
+          return true;
+        }
+        return 'Las contraseñas no coinciden';
+      };
+    }
+  },
+  async created() {
+    await axios.get(
+      `${this.rutaBackend}/usuario/puede-recuperar/${this.$route.params.cedula}`
+    ).then(response => {
+      this.puedeRecuperar = response.data.puede;
+      this.puedeMsj = response.data.message;
+    });
+  }
 };
 </script>
 
 <style scoped>
-.margen {
-  margin-top: 150px;
-}
-
 .fondo {
   background-image: url("../assets/fondologin2.png");
   background-size: 100% 100%;
@@ -254,7 +249,6 @@ export default {
 }
 
 .login_btn {
-  width: 100%;
   background: #f47025 !important;
   color: #ffffff !important;
   font-weight: 700;
@@ -282,7 +276,7 @@ export default {
   outline: 0px !important;
 }
 
-.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+.custom-checkbox .custom-control-input:checked~.custom-control-label::before {
   background-color: #c0392b !important;
 }
 
@@ -302,8 +296,7 @@ export default {
 .v-dialog {
   box-shadow: none !important;
 }
-</style>
-<style>
+
 .v-card__title {
   font-size: 30px !important;
   font-weight: bold !important;
@@ -311,5 +304,10 @@ export default {
 
 .v-card__text {
   font-size: 19px !important;
+}
+
+.v-text-field .v-input__prepend-inner,
+.v-text-field .v-input__append-inner {
+  align-self: center !important;
 }
 </style>

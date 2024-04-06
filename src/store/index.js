@@ -5,21 +5,24 @@ import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {
-    usuario: null,
-  },
-  mutations: {
-    setusuario(state, data) {
-      state.usuario = data;
+    state: {
+        usuario: null,
     },
-  },
+    mutations: {
+        setusuario(state, data) {
+            state.usuario = data;
+        },
+    },
 
-  getters: {
-    getUsuario(state) {
-      return state.usuario;
+    getters: {
+        getUsuario(state) {
+            return state.usuario;
+        },
+        getToken(state) {
+            return state.usuario.access_token;
+        }
     },
-  },
-  actions: {},
-  modules: {},
-  plugins: [createPersistedState()],
+    actions: {},
+    modules: {},
+    plugins: [createPersistedState()],
 });

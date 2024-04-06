@@ -31,10 +31,12 @@ export default {
     },
     data: () => ({
         dialogMsj: false,
+        timeout: null,
     }),
     methods: {
         tiempoDialog() {
-            setTimeout(() => {
+            this.timeout = setTimeout(() => {
+                clearTimeout(this.timeout);
                 this.dialogMsj = false;
                 this.$emit('cerrado');
             }, 1650);

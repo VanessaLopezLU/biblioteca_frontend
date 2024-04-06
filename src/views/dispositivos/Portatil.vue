@@ -3,31 +3,30 @@
     <v-card-title>Portátil</v-card-title>
     <v-img height="297px" lazy-src="../../assets/images/Portatil.png" src="../../assets/images/Portatil.png"></v-img>
     <v-card-text>
-      <v-form ref="form" v-model="valid" lazy-validation>
+      <v-form ref="form" lazy-validation>
         <v-row>
-          <v-col cols="6">
-            <v-text-field
-              v-model="paquete.codigo"
-              :rules="campoRules"
-              label="Código"
-              required></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
-              v-model="paquete.referencia"
-              :rules="campoRules"
-              label="Referencia"
-              required></v-text-field>
-          </v-col>
-          <v-col cols="6">
+          <v-col cols="12">
             <v-text-field
               v-model="paquete.serial"
-              label="Serial"
-              required :rules="campoRules"></v-text-field>
+              :rules="campoRules"
+              label="Serial" filled
+              required />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              v-model="paquete.codigo_telefonica"
+              :rules="campoRules"
+              label="Código telefónica" filled
+              required />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              v-model="paquete.marca"
+              label="Marca" filled
+              required :rules="campoRules" />
           </v-col>
         </v-row>
         <v-btn
-          :disabled="!valid"
           color="success"
           class="mr-4"
           @click="guardar">
@@ -36,7 +35,7 @@
       </v-form>
     </v-card-text>
     <!--Dialog para mensajes temporales-->
-    <dialogMensaje :mostrar="dialogMsj" :title="detalleMsj.title" :body="detalleMsj.body" :classTitle="detalleMsj.classTitle" @cerrado="dialogMsj = false" />
+    <dialogMensaje :mostrar="dialogMsj.mostrar" :title="dialogMsj.title" :body="dialogMsj.body" :classTitle="dialogMsj.classTitle" @cerrado="dialogMsj.mostrar = false" />
   </v-card>
 </template>
 
@@ -49,11 +48,11 @@ export default {
   },
   data: () => ({
     rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
-    valid: true,
+    token: {},
     paquete: {
-      codigo: null,
-      referencia: null,
       serial: null,
+      codigo_telefonica: null,
+      marca: null,
       tipo_equipo: "Portátil", //Aquí va el id del tipo de equipo, se carga automático
     },
     campoRules: [
@@ -61,8 +60,7 @@ export default {
     ],
     select: null,
     items: ["Nuevo", "En reparacion", "Dañado", "Prestado"],
-    dialogMsj: false,
-    detalleMsj: {
+    dialogMsj: {
       classTitle: 'error',
       title: null,
       body: null
@@ -77,16 +75,16 @@ export default {
     },
     async guardar() {
       if (this.$refs.form.validate()) {
-        this.valid = false;
-        await axios.post(`${this.rutaBackend}/equipo/crear`, this.paquete)
+        this.$emit('loadingManager', 'Creando equipo...');
+        await axios.post(`${this.rutaBackend}/equipo/crear`, this.paquete, this.token)
           .then(response => {
-            this.detalleMsj.classTitle = 'success';
-            this.detalleMsj.title = "Crear equipo";
-            this.detalleMsj.body = "Equipo creado";
-            this.dialogMsj = true;
-            console.log(response);
-            this.paquete.estado_equipo = null;
-            this.$refs.form.reset();
+            if (response.data.creado) {
+              this.$refs.form.reset();
+            }
+            this.dialogMsj.title = "Crear equipo";
+            this.dialogMsj.classTitle = response.data.creado ? "success" : "error";
+            this.dialogMsj.body = response.data.message;
+            this.dialogMsj.mostrar = true;
           })
           .catch(error => {
             this.detalleMsj.classTitle = 'error';
@@ -96,13 +94,18 @@ export default {
             // handle error
             console.log(error);
           });
-        this.valid = true;
+        this.$emit('closeManager');
       }
     },
   },
   async created() {
+    this.token = {
+      headers: {
+        Authorization: `Bearer ${this.$store.getters.getToken}`
+      }
+    }
     //Buscar el id del tipo de equipo Portatil
-    await axios.get(`${this.rutaBackend}/tipo-equipo/tipo/Portátil`).then(response => {
+    await axios.get(`${this.rutaBackend}/tipo-equipo/tipo/Portátil`, this.token).then(response => {
       if (response.data.length == 1) {
         this.paquete.tipo_equipo = response.data[0].id;
       }

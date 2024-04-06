@@ -11,7 +11,6 @@ import Vuesax from 'vuesax'
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import vuescroll from "vuescroll";
-import EstadoEquipo from './components/EstadoEquipo.vue'
 Vue.use(require('vue-moment'));
 
 // You can set global config here.

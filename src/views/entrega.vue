@@ -120,6 +120,7 @@ export default {
     },
     data: () => ({
         rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+        token: {},
         horas: [],
         mostrarEquiposPrestamo: false,
         disableBtn: false,
@@ -201,7 +202,7 @@ export default {
             if (this.$refs.form.validate()) {
                 this.$emit('loading', 'Buscando préstamos, espere un momento...');
                 await axios
-                    .get(`${this.rutaBackend}/prestamo/usuario/${this.paquete.cedula}/entregar`)
+                    .get(`${this.rutaBackend}/prestamo/usuario/${this.paquete.cedula}/entregar`, this.token)
                     .then((response) => {
                         this.itemsPrestamo = response.data;
                         this.prestamosTabla = [];
@@ -255,24 +256,21 @@ export default {
             }
         },
         async getInstructores() {
-            await axios.get(`${this.rutaBackend}/usuario/instructor`).then((response) => {
+            await axios.get(`${this.rutaBackend}/usuario/instructor`, this.token).then((response) => {
                 this.usuarios = response.data;
             });
         },
         async obtenerEstadosEquipo() {
-            await axios.get(`${this.rutaBackend}/estado-equipo`).then((response) => {
+            await axios.get(`${this.rutaBackend}/estado-equipo`, this.token).then((response) => {
                 this.itemsEstadosEquipos = response.data;
             });
-        },
-        eliminarEquipo(index) {
-            this.itemsPrestamo.splice(index, 1);
         },
         async entregar() {
             if (this.indexSelecionado != null) {
                 const idPrestamo = this.itemsPrestamo[this.indexSelecionado].id;
 
                 await axios
-                    .put(`${this.rutaBackend}/prestamo/entregar/${idPrestamo}`)
+                    .put(`${this.rutaBackend}/prestamo/entregar/${idPrestamo}`, this.token)
                     .then((response) => {
                         if (response.data) {
                             this.buscarPrestamos();
@@ -294,24 +292,13 @@ export default {
                     });
             }
         },
-        validarEstados() {
-            for (let i = 0; i < this.estadosSeleccionados.length; i++) {
-                if (
-                    this.estadosSeleccionados[i].estado.toLowerCase() != "bueno" &&
-                    /^[ ]*$/gm.test(this.observaciones[i])
-                ) {
-                    this.paqueteMsj.title = "Entrega de equipos";
-                    this.paqueteMsj.body =
-                        "Los equipos con estado MALO deben llevar su observación";
-                    this.paqueteMsj.classTitle = "error";
-                    this.dialogMsj = true;
-                    return false;
-                }
-            }
-            return true;
-        },
     },
     created() {
+        this.token = {
+            headers: {
+                Authorization: `Bearer ${this.$store.getters.getToken}`
+            }
+        }
         this.getInstructores();
     },
 };

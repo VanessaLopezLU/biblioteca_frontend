@@ -32,11 +32,11 @@
               <v-chip
                 class="ma-2"
                 :color="item.estado.id == 1
-              ? 'primary'
-              : item.estado.id == 2
-                ? 'orange'
-                : 'success'
-              ">
+                  ? 'primary'
+                  : item.estado.id == 2
+                    ? 'orange'
+                    : 'success'
+                  ">
                 {{ item.estado.estado }}
               </v-chip>
             </template>
@@ -77,16 +77,16 @@
                 :items="itemsPrestamoEquipos"
                 locale="es-es"
                 :footer-props="{
-              'show-current-page': true,
-              'items-per-page-options': [5, 10, 15],
-              itemsPerPageText: 'Registros mostrados',
-              pageText: '{0}-{1} de {2}',
-              showFirstLastPage: true,
-              firstIcon: 'mdi-arrow-collapse-left',
-              lastIcon: 'mdi-arrow-collapse-right',
-              prevIcon: 'mdi-minus',
-              nextIcon: 'mdi-plus',
-            }"
+                  'show-current-page': true,
+                  'items-per-page-options': [5, 10, 15],
+                  itemsPerPageText: 'Registros mostrados',
+                  pageText: '{0}-{1} de {2}',
+                  showFirstLastPage: true,
+                  firstIcon: 'mdi-arrow-collapse-left',
+                  lastIcon: 'mdi-arrow-collapse-right',
+                  prevIcon: 'mdi-minus',
+                  nextIcon: 'mdi-plus',
+                }"
                 item-key="index"
                 sort-by="tipo_equipo"
                 group-by="tipo_equipo"
@@ -108,6 +108,7 @@ import axios from "axios";
 export default {
   data: () => ({
     rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    token: {},
     dialogDetalleEquipos: false,
     loadTabla: false,
     sel: null,
@@ -117,31 +118,7 @@ export default {
     menu3: false,
     usuarios: [],
     tiposEquipo: [],
-    cards: ["Today", "Yesterday"],
-    drawer: true,
-    valid: true,
     campoRules: [(v) => !!v || "Campo requerido"],
-    select: null,
-    paqueteTabla: {
-      tipo_equipo: {},
-      cantidad: 1,
-      fecha_inicio: new Date(
-        Date.now() - new Date().getTimezoneOffset() * 60000
-      )
-        .toISOString()
-        .slice(0, 10),
-      hora_inicio: null,
-      fecha_fin: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .slice(0, 10),
-      hora_fin: null,
-    },
-    paquete: {
-      usuario: null, //Id del usuario al que se le hace el préstamo
-      fecha_inicio: null,
-      fecha_fin: null,
-      detalle_prestamo: [],
-    },
     headersPrestamo: [
       { text: "Cantidad equipos", value: "cantidad" },
       { text: "Fecha inicio", value: "fecha_inicio" },
@@ -177,7 +154,7 @@ export default {
     async getPrestamos() {
       this.loadTabla = true;
       await axios
-        .get(`${this.rutaBackend}/prestamo`)
+        .get(`${this.rutaBackend}/prestamo`, this.token)
         .then((response) => {
           this.itemsPrestamo = response.data;
           this.itemsPrestamoTabla = response.data.map((prestamo) => {
@@ -201,7 +178,7 @@ export default {
     async getMisPrestamos() {
       this.loadTabla = true;
       await axios
-        .get(`${this.rutaBackend}/prestamo/usuario/${this.idUsuario}/all`)
+        .get(`${this.rutaBackend}/prestamo/usuario/${this.idUsuario}/all`, this.token)
         .then((response) => {
           this.itemsPrestamo = response.data;
           this.itemsPrestamoTabla = response.data.map((prestamo) => {
@@ -248,18 +225,15 @@ export default {
           }`;
       }
       return "Fecha inválida";
-    },
-    fechaSinHora(fecha = null) {
-      if (fecha) {
-        fecha = new Date(fecha);
-        return `${fecha.getHours()}:${(fecha.getMinutes() < 10 ? "0" : "") + fecha.getMinutes()
-          }`;
-      }
-      return "Fecha inválida";
-    },
+    }
   },
   created() {
     const usuario = this.$store.getters.getUsuario;
+    this.token = {
+      headers: {
+        Authorization: `Bearer ${this.$store.getters.getToken}`
+      }
+    }
     if (usuario) {
       if (usuario.rol.descripcion.toLowerCase() == "instructor") {
         this.idUsuario = this.$store.getters.getUsuario.cedula;

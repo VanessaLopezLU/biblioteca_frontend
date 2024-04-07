@@ -47,16 +47,16 @@
             :headers="headersPrestamo"
             :items="prestamosTabla"
             :footer-props="{
-                          'show-current-page': true,
-                          'items-per-page-options': [5, 10, 15],
-                          itemsPerPageText: 'Registros mostrados',
-                          pageText: '{0}-{1} de {2}',
-                          showFirstLastPage: true,
-                          firstIcon: 'mdi-arrow-collapse-left',
-                          lastIcon: 'mdi-arrow-collapse-right',
-                          prevIcon: 'mdi-minus',
-                          nextIcon: 'mdi-plus',
-                        }"
+              'show-current-page': true,
+              'items-per-page-options': [5, 10, 15],
+              itemsPerPageText: 'Registros mostrados',
+              pageText: '{0}-{1} de {2}',
+              showFirstLastPage: true,
+              firstIcon: 'mdi-arrow-collapse-left',
+              lastIcon: 'mdi-arrow-collapse-right',
+              prevIcon: 'mdi-minus',
+              nextIcon: 'mdi-plus',
+            }"
             class="elevation-1">
             <template v-slot:top>
               <v-toolbar flat>
@@ -99,16 +99,16 @@
                 :headers="headersDetalle"
                 :items="itemsDetalle"
                 :footer-props="{
-                          'show-current-page': true,
-                          'items-per-page-options': [5, 10, 15],
-                          itemsPerPageText: 'Registros mostrados',
-                          pageText: '{0}-{1} de {2}',
-                          showFirstLastPage: true,
-                          firstIcon: 'mdi-arrow-collapse-left',
-                          lastIcon: 'mdi-arrow-collapse-right',
-                          prevIcon: 'mdi-minus',
-                          nextIcon: 'mdi-plus',
-                        }"
+                  'show-current-page': true,
+                  'items-per-page-options': [5, 10, 15],
+                  itemsPerPageText: 'Registros mostrados',
+                  pageText: '{0}-{1} de {2}',
+                  showFirstLastPage: true,
+                  firstIcon: 'mdi-arrow-collapse-left',
+                  lastIcon: 'mdi-arrow-collapse-right',
+                  prevIcon: 'mdi-minus',
+                  nextIcon: 'mdi-plus',
+                }"
                 class="elevation-1">
 
                 <template v-slot:top>
@@ -173,6 +173,7 @@ export default {
   },
   data: () => ({
     rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    token: {},
     horas: [],
     mostrarEquiposPrestamo: false,
     disableBtn: false,
@@ -260,7 +261,7 @@ export default {
       if (this.$refs.form.validate()) {
         this.$emit('loading', 'Buscando préstamos, espere un momento...');
         await axios
-          .get(`${this.rutaBackend}/prestamo/usuario/${this.paquete.cedula}/devolucion`)
+          .get(`${this.rutaBackend}/prestamo/usuario/${this.paquete.cedula}/devolucion`, this.token)
           .then((response) => {
             this.itemsPrestamo = response.data;
             this.prestamosTabla = [];
@@ -314,17 +315,14 @@ export default {
       }
     },
     async obtenerUsuarios() {
-      await axios.get(`${this.rutaBackend}/usuario/instructor`).then((response) => {
+      await axios.get(`${this.rutaBackend}/usuario/instructor`, this.token).then((response) => {
         this.usuarios = response.data;
       });
     },
     async obtenerEstadosEquipo() {
-      await axios.get(`${this.rutaBackend}/estado-equipo`).then((response) => {
+      await axios.get(`${this.rutaBackend}/estado-equipo`, this.token).then((response) => {
         this.itemsEstadosEquipos = response.data;
       });
-    },
-    eliminarEquipo(index) {
-      this.itemsPrestamo.splice(index, 1);
     },
     async devolucion() {
       if (this.validarEstados()) {
@@ -342,9 +340,8 @@ export default {
           ),
         };
         await axios
-          .post(`${this.rutaBackend}/prestamo/devolucion`, paquete)
+          .post(`${this.rutaBackend}/prestamo/devolucion`, paquete, this.token)
           .then((response) => {
-            console.log(response);
             if (response.data) {
               this.buscarPrestamos();
               this.itemsDetalle = [];
@@ -384,6 +381,11 @@ export default {
     },
   },
   created() {
+    this.token = {
+      headers: {
+        Authorization: `Bearer ${this.$store.getters.getToken}`
+      }
+    }
     this.obtenerUsuarios();
     this.obtenerEstadosEquipo();
   },

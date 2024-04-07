@@ -111,6 +111,7 @@ export default {
     components: { dialogMensaje },
     data: () => ({
         rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+        token: {},
         valid: true,
         validTipo: true,
         validEditar: true,
@@ -144,16 +145,10 @@ export default {
         loadTabla: false,
         loadTablaTipo: false,
     }),
-
-    computed: {
-    },
-
-    watch: {
-    },
     methods: {
         async obtenerEstadosEquipo() {
             this.loadTabla = true;
-            await axios.get(`${this.rutaBackend}/estado-equipo`).then(response => {
+            await axios.get(`${this.rutaBackend}/estado-equipo`, this.token).then(response => {
                 this.items = response.data;
             }).catch(error => {
                 this.detalleMsj.title = "Obtener estados de equipo";
@@ -165,7 +160,7 @@ export default {
         },
         async obtenerTiposEquipo() {
             this.loadTablaTipo = true;
-            await axios.get(`${this.rutaBackend}/tipo-equipo`).then(response => {
+            await axios.get(`${this.rutaBackend}/tipo-equipo`, this.token).then(response => {
                 this.itemsTipo = response.data;
             }).catch(error => {
                 this.detalleMsj.title = "Obtener tipos de equipo";
@@ -178,8 +173,7 @@ export default {
         async guardarEstadoEquipo() {
             if (this.$refs.form.validate()) {
                 this.$emit('loadingManager', 'Creando estado de equipo...');
-                await axios.post(`${this.rutaBackend}/estado-equipo/crear`, this.paquete).then(response => {
-                    console.log(response.data);
+                await axios.post(`${this.rutaBackend}/estado-equipo/crear`, this.paquete, this.token).then(() => {
                     this.obtenerEstadosEquipo();
                     this.$refs.form.reset();
                 }).catch(error => {
@@ -190,11 +184,11 @@ export default {
                 });
                 this.$emit('loadingManager');
             }
-        }, async guardarTipoEquipo() {
+        },
+        async guardarTipoEquipo() {
             if (this.$refs.formTipo.validate()) {
                 this.$emit('loadingManager', 'Creando tipo de equipo...');
-                await axios.post(`${this.rutaBackend}/tipo-equipo/crear`, this.paqueteTipo).then(response => {
-                    console.log(response.data);
+                await axios.post(`${this.rutaBackend}/tipo-equipo/crear`, this.paqueteTipo, this.token).then(() => {
                     this.obtenerTiposEquipo();
                     this.$refs.formTipo.reset();
                 }).catch(error => {
@@ -207,6 +201,11 @@ export default {
             }
         }
     }, created() {
+        this.token = {
+            headers: {
+                Authorization: `Bearer ${this.$store.getters.getToken}`
+            }
+        }
         this.obtenerTiposEquipo();
         this.obtenerEstadosEquipo();
     }

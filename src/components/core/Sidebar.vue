@@ -1,19 +1,17 @@
 <template>
   <v-card elevation="1">
     <v-navigation-drawer
-      v-model="drawer"
+      v-model="drawerSidebar"
       app
       class="bg-header-global"
-      width="322px"
-    >
+      width="322px">
       <vuescroll :ops="ops">
         <div class="bg-header-global">
           <v-img
             contain
             height="120px"
             lazy-src="../../assets/logos/TAlogin.png"
-            src="../../assets/logos/TAlogin.png"
-          >
+            src="../../assets/logos/TAlogin.png">
           </v-img>
         </div>
         <v-divider></v-divider>
@@ -69,31 +67,8 @@ export default {
         disable: false,
       },
     },
-
-    links: [
-      ["mdi-inbox-arrow-down", "Inbox"],
-      ["mdi-send", "Send"],
-      ["mdi-delete", "Trash"],
-      ["mdi-alert-octagon", "Spam"],
-    ],
+    drawerSidebar: false,
     menu: [],
-    menu2: [
-      { title: "Inicio", icon: "mdi-view-dashboard", ruta: "djhfbcjdfsc" },
-      { title: "Cuenta", icon: "mdi-account-box" },
-      { title: "Admin", icon: "mdi-gavel" },
-      { title: "Prestamo", icon: "" },
-      { title: "Préstamo p", icon: "mdi-person" },
-    ],
-    admins: [
-      ["Management", "mdi-account-multiple-outline"],
-      ["Settings", "mdi-cog-outline"],
-    ],
-    cruds: [
-      ["Create", "mdi-plus-outline"],
-      ["Read", "mdi-file-outline"],
-      ["Update", "mdi-update"],
-      ["Delete", "mdi-delete"],
-    ],
   }),
   mounted() {
     const rol = this.$store.getters.getUsuario.rol.descripcion.toLowerCase();
@@ -102,6 +77,14 @@ export default {
     );
     if (indexRol != -1) {
       this.menu = menuRoles[indexRol].menu;
+    }
+  },
+  watch: {
+    drawer: {
+      handler(val) {
+        this.drawerSidebar = val;
+      },
+      immediate: true
     }
   },
   methods: {

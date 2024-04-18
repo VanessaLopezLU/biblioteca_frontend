@@ -68,7 +68,7 @@ import dialogMensaje from '../components/dialogMensaje.vue';
 export default {
     components: { dialogMensaje },
     data: () => ({
-        rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+        rutaBackend: `${process.env.VUE_APP_API}`,
         valid: true,
         token: {},
         disableBtn: false,

@@ -116,7 +116,7 @@ export default {
     name: 'EquipoComponent',
     components: { dialogMensaje, dialogConfirmacion },
     data: () => ({
-        rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+        rutaBackend: `${process.env.VUE_APP_API}`,
         dialogExcel: false,
         dialogEditarEquipo: false,
         estadosEquipo: [],
@@ -167,7 +167,7 @@ export default {
             if (this.$refs.formExcel.validate()) {
                 this.btnSubir = true;
                 this.$emit('loadingManager', 'Procesando archivo, espere un momento...');
-                await axios.postForm(`${this.rutaBackend}/equipo/subirMasivo`, this.paquete).then(response => {
+                await axios.postForm(`${this.rutaBackend}/equipo/subirMasivo`, this.paquete, this.token).then(response => {
                     console.log(response);
                     this.$emit('closeManager');
                     this.$refs.formExcel.reset();
@@ -237,7 +237,7 @@ export default {
         },
         async obtenerEquipos() {
             this.loadTablaEquipo = true;
-            await axios.get(`${this.rutaBackend}/equipo`).then(response => {
+            await axios.get(`${this.rutaBackend}/equipo`,this.token).then(response => {
                 this.itemsEquipo = response.data;
             }).catch(error => {
                 this.detalleMsj.title = "Obtener equipos";

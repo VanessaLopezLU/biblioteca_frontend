@@ -19,7 +19,7 @@
       </v-row>
     </v-app-bar>
     <v-main>
-      <v-carousel class="mt-4">
+      <v-carousel class="mt-4" cycle :interval="3500">
         <v-carousel-item v-for="(item, i) in items" :key="i" :src="item.src" reverse-transition="fade-transition"
           transition="fade-transition"></v-carousel-item>
       </v-carousel>
@@ -155,7 +155,7 @@ export default {
   },
   data: () => ({
     active: "home",
-    rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    rutaBackend: `${process.env.VUE_APP_API}`,
     dialog: false,
     dialogMsj: false,
     paqueteMsj: {

@@ -28,45 +28,21 @@
                             v-on="on"
                             :rules="campoRules"></v-text-field>
                         </template>
-                        <v-date-picker
-                          v-model="paqueteTabla.fecha_inicio"
-                          @input="validarFechas"
-                          color="orange white"
-                          header-color="#ffa726"
-                          locale="es" />
+                        <v-date-picker v-model="paqueteTabla.fecha_inicio" @input="validarFechas" :min="minDate" color="orange white" header-color="#ffa726" locale="es" />
                       </v-dialog>
                     </v-col>
                     <v-col cols="6" class="pl-1">
                       <v-row no-gutters class="flex-nowrap">
-                        <v-select
-                          required
-                          v-model="paqueteTabla.hora_inicio"
-                          filled
-                          label="Hora inicio"
-                          append-icon="mdi-timer-sand"
-                          :items="horas"
-                          :rules="campoRules"
-                          @change="validarFechas">
+                        <v-select required v-model="paqueteTabla.hora_inicio" filled label="Hora inicio" append-icon="mdi-timer-sand" :items="horas" :rules="campoRules" @change="validarFechas">
                         </v-select>
-                        <v-select
-                          required
-                          v-model="paqueteTabla.minuto_inicio"
-                          filled
-                          label="Minuto"
-                          append-icon="mdi mdi-timer-play-outline"
-                          :items="minutos"
-                          :rules="campoRules"
-                          @change="validarFechas">
+                        <v-select required v-model="paqueteTabla.minuto_inicio" filled label="Minuto" append-icon="mdi mdi-timer-play-outline" :items="minutos" :rules="campoRules" @change="validarFechas">
                         </v-select>
                       </v-row>
                     </v-col>
                   </v-row>
                   <v-row no-gutters>
                     <v-col cols="6" class="pr-1">
-                      <v-dialog
-                        v-model="modalFechaFin"
-                        persistent
-                        width="290px">
+                      <v-dialog v-model="modalFechaFin" persistent width="290px">
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="paqueteTabla.fecha_fin"
@@ -78,63 +54,25 @@
                             v-on="on"
                             :rules="campoRules"></v-text-field>
                         </template>
-                        <v-date-picker
-                          v-model="paqueteTabla.fecha_fin"
-                          @input="validarFechas"
-                          color="orange white"
-                          header-color="#ffa726"
-                          locale="es" />
+                        <v-date-picker v-model="paqueteTabla.fecha_fin" @input="validarFechas" color="orange white" :min="minDate" header-color="#ffa726" locale="es" />
                       </v-dialog>
                     </v-col>
                     <v-col cols="6" class="pl-1">
                       <v-row no-gutters class="flex-nowrap">
-                        <v-select
-                          required
-                          v-model="paqueteTabla.hora_fin"
-                          filled
-                          label="Hora fin"
-                          append-icon="mdi-timer-sand-complete"
-                          :items="horas"
-                          :rules="campoRules"
-                          @change="validarFechas">
+                        <v-select required v-model="paqueteTabla.hora_fin" filled label="Hora fin" append-icon="mdi-timer-sand-complete" :items="horas" :rules="campoRules" @change="validarFechas">
                         </v-select>
-                        <v-select
-                          required
-                          v-model="paqueteTabla.minuto_fin"
-                          filled
-                          label="Minuto"
-                          append-icon="mdi mdi-timer-pause-outline"
-                          :items="minutos"
-                          :rules="campoRules"
-                          @change="validarFechas">
+                        <v-select required v-model="paqueteTabla.minuto_fin" filled label="Minuto" append-icon="mdi mdi-timer-pause-outline" :items="minutos" :rules="campoRules" @change="validarFechas">
                         </v-select>
                       </v-row>
                     </v-col>
                   </v-row>
                   <v-row>
                     <v-col cols="6" class="pr-1 pb-0">
-                      <v-autocomplete
-                        v-model="paqueteTabla.tipo_equipo"
-                        :items="tiposEquipo"
-                        item-text="tipo"
-                        label="Tipo de equipo"
-                        filled
-                        required
-                        return-object
-                        no-data-text="Sin tipo de equipos"
-                        append-icon="mdi-devices"
-                        :rules="campoRules">
+                      <v-autocomplete v-model="paqueteTabla.tipo_equipo" :items="tiposEquipo" item-text="tipo" label="Tipo de equipo" filled required return-object no-data-text="Sin tipo de equipos" append-icon="mdi-devices" :rules="campoRules">
                       </v-autocomplete>
                     </v-col>
                     <v-col cols="6" class="pl-1 pb-0">
-                      <v-text-field
-                        v-model="paqueteTabla.cantidad"
-                        type="number"
-                        min="1"
-                        filled
-                        label="Cantidad"
-                        append-icon="mdi-plus"
-                        :rules="numberRules"></v-text-field>
+                      <v-text-field v-model="paqueteTabla.cantidad" type="number" min="1" filled label="Cantidad" append-icon="mdi-plus" :rules="numberRules"></v-text-field>
                     </v-col>
                   </v-row>
                   <v-row justify="center" no-gutters class="mt-2">
@@ -158,21 +96,17 @@
           </v-col>
         </v-row>
         <v-row class="flex-column mb-4" v-if="mostrarEquiposPrestamo">
-          <v-data-table
-            :headers="headersDetalle"
-            :items="detallePrestamo"
-            :footer-props="{
-              'show-current-page': true,
-              'items-per-page-options': [5, 10, 15],
-              itemsPerPageText: 'Registros mostrados',
-              pageText: '{0}-{1} de {2}',
-              showFirstLastPage: true,
-              firstIcon: 'mdi-arrow-collapse-left',
-              lastIcon: 'mdi-arrow-collapse-right',
-              prevIcon: 'mdi-minus',
-              nextIcon: 'mdi-plus',
-            }"
-            class="elevation-1">
+          <v-data-table :headers="headersDetalle" :items="detallePrestamo" :footer-props="{
+            'show-current-page': true,
+            'items-per-page-options': [5, 10, 15],
+            itemsPerPageText: 'Registros mostrados',
+            pageText: '{0}-{1} de {2}',
+            showFirstLastPage: true,
+            firstIcon: 'mdi-arrow-collapse-left',
+            lastIcon: 'mdi-arrow-collapse-right',
+            prevIcon: 'mdi-minus',
+            nextIcon: 'mdi-plus',
+          }" class="elevation-1">
             <template v-slot:top>
               <v-toolbar flat>
                 <v-toolbar-title>Detalle de equipos</v-toolbar-title>
@@ -202,21 +136,17 @@
           </v-data-table>
         </v-row>
         <v-row class="flex-column mt-4">
-          <v-data-table
-            :headers="headersPrestamo"
-            :items="itemsPrestamo"
-            :footer-props="{
-              'show-current-page': true,
-              'items-per-page-options': [5, 10, 15],
-              itemsPerPageText: 'Registros mostrados',
-              pageText: '{0}-{1} de {2}',
-              showFirstLastPage: true,
-              firstIcon: 'mdi-arrow-collapse-left',
-              lastIcon: 'mdi-arrow-collapse-right',
-              prevIcon: 'mdi-minus',
-              nextIcon: 'mdi-plus',
-            }"
-            class="elevation-1">
+          <v-data-table :headers="headersPrestamo" :items="itemsPrestamo" :footer-props="{
+            'show-current-page': true,
+            'items-per-page-options': [5, 10, 15],
+            itemsPerPageText: 'Registros mostrados',
+            pageText: '{0}-{1} de {2}',
+            showFirstLastPage: true,
+            firstIcon: 'mdi-arrow-collapse-left',
+            lastIcon: 'mdi-arrow-collapse-right',
+            prevIcon: 'mdi-minus',
+            nextIcon: 'mdi-plus',
+          }" class="elevation-1">
             <template v-slot:top>
               <v-toolbar flat>
                 <v-toolbar-title>Equipos</v-toolbar-title>
@@ -271,12 +201,7 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <dialogMensaje
-      :mostrar="dialogMsj"
-      @cerrado="dialogMsj = false"
-      :title="paqueteMsj.title"
-      :body="paqueteMsj.body"
-      :classTitle="paqueteMsj.classTitle" />
+    <dialogMensaje :mostrar="dialogMsj" @cerrado="dialogMsj = false" :title="paqueteMsj.title" :body="paqueteMsj.body" :classTitle="paqueteMsj.classTitle" />
   </v-container>
 </template>
 
@@ -288,7 +213,7 @@ export default {
     dialogMensaje,
   },
   data: () => ({
-    rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    rutaBackend: `${process.env.VUE_APP_API}`,
     token: {},
     horas: [],
     modalFechaFin: false,
@@ -348,15 +273,7 @@ export default {
       { text: "Cantidad", value: "cantidad" },
     ],
     detallePrestamo: [],
-    diasCalendario: [
-      "Domingo",
-      "Lunes",
-      "Martes",
-      "Miércoles",
-      "Jueves",
-      "Viernes",
-      "Sábado",
-    ],
+    minDate: null,
   }),
   methods: {
     async obtenerUsuarios() {
@@ -561,7 +478,9 @@ export default {
       headers: {
         Authorization: `Bearer ${this.$store.getters.getToken}`
       }
-    }
+    };
+    const d = new Date();
+    this.minDate = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}T00:00-05:00`;
     this.obtenerTiposEquipo();
     for (let i = 6; i <= 21; i++) {
       this.horas.push(i);

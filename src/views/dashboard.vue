@@ -4,7 +4,7 @@
     <Sidebar :drawer="drawer" />
     <v-main>
       <v-container
-        class="py-5 "
+        class="py-5"
         fluid>
         <v-row>
           <v-col

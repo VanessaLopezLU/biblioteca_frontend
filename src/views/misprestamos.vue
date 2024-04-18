@@ -107,7 +107,7 @@
 import axios from "axios";
 export default {
   data: () => ({
-    rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    rutaBackend: `${process.env.VUE_APP_API}`,
     token: {},
     dialogDetalleEquipos: false,
     loadTabla: false,

@@ -17,7 +17,7 @@ const routes = [{
             import ("../views/restcontrasena.vue"),
     },
     {
-        path: "/cambio-contrasena/:cedula",
+        path: "/cambio-contrasena/:cedula(\\d+)/:token",
         name: "CambioContrasena",
         component: () =>
             import ("../views/cambioContrasena.vue"),

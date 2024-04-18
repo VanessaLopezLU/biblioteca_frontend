@@ -41,7 +41,7 @@ export default {
     dialogMensaje
   },
   data: () => ({
-    rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    rutaBackend: `${process.env.VUE_APP_API}`,
     valid: true,
     token: {},
     dialogMsj: {

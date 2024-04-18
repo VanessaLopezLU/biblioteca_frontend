@@ -65,7 +65,7 @@ export default {
       (v) => !!v || 'Campo requerido',
       (v) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'Ingresa un correo válido'
     ],
-    rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    rutaBackend: `${process.env.VUE_APP_API}`,
     dialogMsj: false,
     paqueteMsj: {
       title: '',
@@ -83,8 +83,8 @@ export default {
         }).then(response => {
           this.paqueteMsj.title = "Recuperación de contraseña";
           if (response.data.success) {
-            this.$refs.formRecuperar.reset();
             this.paqueteMsj.body = "Se ha enviado un correo a " + this.correo + " con instrucciones para recuperar su contraseña";
+            this.$refs.formRecuperar.reset();
             this.paqueteMsj.classTitle = "success";
           } else {
             this.paqueteMsj.body = response.data.message;

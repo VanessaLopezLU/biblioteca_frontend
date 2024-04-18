@@ -105,7 +105,7 @@ export default {
     rules: {
       required: value => !!value || 'Campo requerido',
     },
-    rutaBackend: `${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+    rutaBackend: `${process.env.VUE_APP_API}`,
     puedeRecuperar: false,
     puedeMsj: null,
     dialog: false,
@@ -150,7 +150,7 @@ export default {
   },
   async created() {
     await axios.get(
-      `${this.rutaBackend}/usuario/puede-recuperar/${this.$route.params.cedula}`
+      `${this.rutaBackend}/usuario/puede-recuperar/${this.$route.params.cedula}/${this.$route.params.token}`
     ).then(response => {
       this.puedeRecuperar = response.data.puede;
       this.puedeMsj = response.data.message;

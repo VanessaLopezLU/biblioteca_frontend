@@ -160,16 +160,9 @@ div.v-application .primary--text {
   background-color: #a299a3 !important;
 }
 
-
-
-/*    .body-component{
-    background-image: url("./assets/fondo.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    height:100vh;
-    background-attachment: fixed;
-    overflow: scroll;
-  } */
+.__bar-is-vertical {
+  background: orange !important;
+}
 
 
 .button-text {
@@ -191,5 +184,20 @@ div.v-application .primary--text {
   flex-direction: column !important;
   gap: 4px !important;
   align-items: center !important;
+}
+
+@media (max-width:400px) {
+  .flex-xs-wrap {
+    flex-wrap: wrap !important;
+  }
+
+  .flex-xs-nowrap {
+    flex-wrap: nowrap !important;
+    flex: 1 1 auto !important;
+  }
+
+  .col-xs-12 {
+    width: 100% !important;
+  }
 }
 </style>

@@ -78,7 +78,7 @@ export default {
     async recuperarContrasena() {
       if (this.$refs.formRecuperar.validate()) {
         this.$emit('loading', 'Enviando correo...');
-        await axios.post(`${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}/usuario/recuperar-contrasena`, {
+        await axios.post(`${this.rutaBackend}/usuario/recuperar-contrasena`, {
           email: this.correo
         }).then(response => {
           this.paqueteMsj.title = "Recuperación de contraseña";

@@ -10,7 +10,7 @@
 
       <v-spacer></v-spacer>
       <p class="m-0 p-0 letra" style="font-size: 1.2rem;">
-        {{ $store.getters.getUsuario.nombre }} - {{ $store.getters.getUsuario.rol.descripcion }}
+        {{ $store.getters.getUsuario.nombre }} - {{ $store.getters.getUsuario.rol != null ? $store.getters.getUsuario.rol.descripcion : '' }}
       </p>
       <v-menu offset-y>
 
@@ -36,7 +36,7 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-    <v-row justify="space-around"> 
+    <v-row justify="space-around">
       <v-col cols="12">
         <v-dialog transition="dialog-bottom-transition" max-width="550" v-model="dialogPerfil">
           <v-card>

@@ -334,13 +334,8 @@ export default {
         this.disableBtn = true;
         if (this.validarFechas()) {
           this.$emit("loading", "Creando préstamo, espere un momento..."); //Mostrar overlay
-          this.paquete.fecha_inicio = `${this.paqueteTabla.fecha_fin}T${(this.paqueteTabla.hora_inicio < 10 ? "0" : "") +
-            this.paqueteTabla.hora_inicio
-            }:${this.paqueteTabla.minuto_inicio}`;
-
-          this.paquete.fecha_fin = `${this.paqueteTabla.fecha_fin}T${(this.paqueteTabla.hora_fin < 10 ? "0" : "") +
-            this.paqueteTabla.hora_fin
-            }:${this.paqueteTabla.minuto_fin}`;
+          this.paquete.fecha_inicio = `${this.paqueteTabla.fecha_fin}T${this.paqueteTabla.hora_inicio.toString().padStart(2, '0')}:${this.paqueteTabla.minuto_inicio}-05:00`;
+          this.paquete.fecha_fin = `${this.paqueteTabla.fecha_fin}T${this.paqueteTabla.hora_fin.toString().padStart(2, '0')}:${this.paqueteTabla.minuto_fin}-05:00`;
           const detalles = this.itemsPrestamo.map((item) => {
             return {
               tipo_equipo: item.detalle.id,
@@ -503,6 +498,12 @@ export default {
 <style>
 .v-application .primary--text {
   color: orange !important;
+}
+
+.container-email {
+  background-image: url('../assets/fondo.png');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .v-item-group.v-bottom-navigation .v-btn {

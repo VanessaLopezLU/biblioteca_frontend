@@ -9,6 +9,8 @@
       <v-toolbar-title class="letra">SISTEMA DE BIBLIOTECAS</v-toolbar-title>
 
       <v-spacer></v-spacer>
+       
+      
       <p class="m-0 p-0 letra" style="font-size: 1.2rem;">
         {{ $store.getters.getUsuario.nombre }} - {{ $store.getters.getUsuario.rol != null ? $store.getters.getUsuario.rol.descripcion : '' }}
       </p>
